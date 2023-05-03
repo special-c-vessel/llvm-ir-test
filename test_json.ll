@@ -12,24 +12,79 @@ target triple = "x86_64-apple-macosx13.0.0"
 %"struct.std::__1::__compressed_pair_elem.5" = type { %"struct.std::__1::array"* }
 %"struct.std::__1::array" = type opaque
 
+@.str = private unnamed_addr constant [6 x i8] c"Alice\00", align 1
+@.str.1 = private unnamed_addr constant [5 x i8] c"name\00", align 1
+
 ; Function Attrs: mustprogress noinline norecurse optnone ssp uwtable
-define i32 @main() #0 !dbg !4293 {
+define i32 @main() #0 personality i8* bitcast (i32 (...)* @__gxx_personality_v0 to i8*) !dbg !4293 {
 entry:
   %retval = alloca i32, align 4
   %root = alloca %"class.Json::Value", align 8
+  %ref.tmp = alloca %"class.Json::Value", align 8
+  %exn.slot = alloca i8*, align 8
+  %ehselector.slot = alloca i32, align 4
   store i32 0, i32* %retval, align 4
   call void @llvm.dbg.declare(metadata %"class.Json::Value"* %root, metadata !4294, metadata !DIExpression()), !dbg !4295
   call void @_ZN4Json5ValueC1ENS_9ValueTypeE(%"class.Json::Value"* noundef %root, i32 noundef 0), !dbg !4295
-  store i32 0, i32* %retval, align 4, !dbg !4296
-  call void @_ZN4Json5ValueD1Ev(%"class.Json::Value"* noundef %root) #4, !dbg !4297
-  %0 = load i32, i32* %retval, align 4, !dbg !4297
-  ret i32 %0, !dbg !4297
+  invoke void @_ZN4Json5ValueC1EPKc(%"class.Json::Value"* noundef %ref.tmp, i8* noundef getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0))
+          to label %invoke.cont unwind label %lpad, !dbg !4296
+
+invoke.cont:                                      ; preds = %entry
+  %call = invoke noundef nonnull align 8 dereferenceable(40) %"class.Json::Value"* @_ZN4Json5ValueixEPKc(%"class.Json::Value"* noundef %root, i8* noundef getelementptr inbounds ([5 x i8], [5 x i8]* @.str.1, i64 0, i64 0))
+          to label %invoke.cont2 unwind label %lpad1, !dbg !4297
+
+invoke.cont2:                                     ; preds = %invoke.cont
+  %call3 = call noundef nonnull align 8 dereferenceable(40) %"class.Json::Value"* @_ZN4Json5ValueaSEOS0_(%"class.Json::Value"* noundef %call, %"class.Json::Value"* noundef nonnull align 8 dereferenceable(40) %ref.tmp) #4, !dbg !4298
+  call void @_ZN4Json5ValueD1Ev(%"class.Json::Value"* noundef %ref.tmp) #4, !dbg !4297
+  store i32 0, i32* %retval, align 4, !dbg !4299
+  call void @_ZN4Json5ValueD1Ev(%"class.Json::Value"* noundef %root) #4, !dbg !4300
+  %0 = load i32, i32* %retval, align 4, !dbg !4300
+  ret i32 %0, !dbg !4300
+
+lpad:                                             ; preds = %entry
+  %1 = landingpad { i8*, i32 }
+          cleanup, !dbg !4300
+  %2 = extractvalue { i8*, i32 } %1, 0, !dbg !4300
+  store i8* %2, i8** %exn.slot, align 8, !dbg !4300
+  %3 = extractvalue { i8*, i32 } %1, 1, !dbg !4300
+  store i32 %3, i32* %ehselector.slot, align 4, !dbg !4300
+  br label %ehcleanup, !dbg !4300
+
+lpad1:                                            ; preds = %invoke.cont
+  %4 = landingpad { i8*, i32 }
+          cleanup, !dbg !4300
+  %5 = extractvalue { i8*, i32 } %4, 0, !dbg !4300
+  store i8* %5, i8** %exn.slot, align 8, !dbg !4300
+  %6 = extractvalue { i8*, i32 } %4, 1, !dbg !4300
+  store i32 %6, i32* %ehselector.slot, align 4, !dbg !4300
+  call void @_ZN4Json5ValueD1Ev(%"class.Json::Value"* noundef %ref.tmp) #4, !dbg !4297
+  br label %ehcleanup, !dbg !4297
+
+ehcleanup:                                        ; preds = %lpad1, %lpad
+  call void @_ZN4Json5ValueD1Ev(%"class.Json::Value"* noundef %root) #4, !dbg !4300
+  br label %eh.resume, !dbg !4300
+
+eh.resume:                                        ; preds = %ehcleanup
+  %exn = load i8*, i8** %exn.slot, align 8, !dbg !4300
+  %sel = load i32, i32* %ehselector.slot, align 4, !dbg !4300
+  %lpad.val = insertvalue { i8*, i32 } undef, i8* %exn, 0, !dbg !4300
+  %lpad.val4 = insertvalue { i8*, i32 } %lpad.val, i32 %sel, 1, !dbg !4300
+  resume { i8*, i32 } %lpad.val4, !dbg !4300
 }
 
 ; Function Attrs: nocallback nofree nosync nounwind readnone speculatable willreturn
 declare void @llvm.dbg.declare(metadata, metadata, metadata) #1
 
 declare void @_ZN4Json5ValueC1ENS_9ValueTypeE(%"class.Json::Value"* noundef, i32 noundef) unnamed_addr #2
+
+declare void @_ZN4Json5ValueC1EPKc(%"class.Json::Value"* noundef, i8* noundef) unnamed_addr #2
+
+declare i32 @__gxx_personality_v0(...)
+
+declare noundef nonnull align 8 dereferenceable(40) %"class.Json::Value"* @_ZN4Json5ValueixEPKc(%"class.Json::Value"* noundef, i8* noundef) #2
+
+; Function Attrs: nounwind
+declare noundef nonnull align 8 dereferenceable(40) %"class.Json::Value"* @_ZN4Json5ValueaSEOS0_(%"class.Json::Value"* noundef, %"class.Json::Value"* noundef nonnull align 8 dereferenceable(40)) #3
 
 ; Function Attrs: nounwind
 declare void @_ZN4Json5ValueD1Ev(%"class.Json::Value"* noundef) unnamed_addr #3
@@ -4340,5 +4395,8 @@ attributes #4 = { nounwind }
 !4293 = distinct !DISubprogram(name: "main", scope: !8, file: !8, line: 5, type: !3256, scopeLine: 5, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !91)
 !4294 = !DILocalVariable(name: "root", scope: !4293, file: !8, line: 7, type: !13)
 !4295 = !DILocation(line: 7, column: 14, scope: !4293)
-!4296 = !DILocation(line: 9, column: 5, scope: !4293)
-!4297 = !DILocation(line: 10, column: 1, scope: !4293)
+!4296 = !DILocation(line: 8, column: 17, scope: !4293)
+!4297 = !DILocation(line: 8, column: 2, scope: !4293)
+!4298 = !DILocation(line: 8, column: 15, scope: !4293)
+!4299 = !DILocation(line: 9, column: 5, scope: !4293)
+!4300 = !DILocation(line: 10, column: 1, scope: !4293)

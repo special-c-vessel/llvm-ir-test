@@ -5,6 +5,6 @@
 int main() {
 
 	Json::Value root;
-
+	root["name"] = "Alice";
     return 0;
 }
